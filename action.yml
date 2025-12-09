@@ -70,7 +70,7 @@ runs:
 
     - name: Setup MariaDB
       id: mariadb-install
-      if: inputs.db-type != 'mysql'
+      if: inputs.db-type != 'mysql' && inputs.os != 'S390X'
       uses: rusher/action-setup-mariadb@master
       with:
         tag: ${{ inputs.db-tag }}
@@ -85,6 +85,29 @@ runs:
           ${{ startsWith(inputs.os, 'windows') && format('--ssl-ca={0}/.github/workflows/certs/ca.crt', github.workspace) || '--ssl-ca=/etc/mysql/conf.d/ca.crt'}}
           ${{ startsWith(inputs.os, 'windows') && format('--ssl-cert={0}/.github/workflows/certs/server.crt', github.workspace) || '--ssl-cert=/etc/mysql/conf.d/server.crt'}}
           ${{ startsWith(inputs.os, 'windows') && format('--ssl-key={0}/.github/workflows/certs/server.key', github.workspace) || '--ssl-key=/etc/mysql/conf.d/server.key'}}
+          ${{ '--max-connections=500'}}
+        conf-script-folder: ${{ github.workspace }}/.github/workflows/certs
+        init-script-folder: ${{ inputs.init-script-folder }}
+        port: ${{ inputs.test-db-port }}
+
+    - name: Setup MariaDB (s390x)
+      id: mariadb-install-s390x
+      if: inputs.db-type != 'mysql' && inputs.os == 'S390X'
+      uses: rusher/action-setup-mariadb@master
+      with:
+        tag: ${{ inputs.db-tag }}
+        root-password: ${{ inputs.test-db-password }}
+        database: ${{ inputs.test-db-database }}
+#        registry: ${{ inputs.db-type == 'enterprise' && 'docker.mariadb.com/enterprise-server' || (inputs.db-type == 'dev' && 'quay.io/mariadb-foundation/mariadb-devel' || '') }}
+        registry: ${{ inputs.db-type == 'community' && 'quay.io/mariadb-foundation/mariadb-devel' || (inputs.db-type == 'dev' && 'quay.io/mariadb-foundation/mariadb-devel' || '') }}
+        registry-user: ${{ inputs.registry-user }}
+        registry-password: ${{ inputs.registry-password }}
+        additional-conf: |
+          ${{ inputs.additional-conf }}
+          ${{ '--loose-caching_sha2_password_auto_generate_rsa_keys=1'}}
+          ${{ '--ssl-ca=/etc/mysql/conf.d/ca.crt'}}
+          ${{ '--ssl-cert=/etc/mysql/conf.d/server.crt'}}
+          ${{ '--ssl-key=/etc/mysql/conf.d/server.key'}}
           ${{ '--max-connections=500'}}
         conf-script-folder: ${{ github.workspace }}/.github/workflows/certs
         init-script-folder: ${{ inputs.init-script-folder }}
