@@ -98,8 +98,8 @@ runs:
         tag: ${{ inputs.db-tag }}
         root-password: ${{ inputs.test-db-password }}
         database: ${{ inputs.test-db-database }}
-#        registry: ${{ inputs.db-type == 'enterprise' && 'docker.mariadb.com/enterprise-server' || (inputs.db-type == 'dev' && 'quay.io/mariadb-foundation/mariadb-devel' || '') }}
-        registry: ${{ inputs.db-type == 'community' && 'quay.io/mariadb-foundation/mariadb-devel' || (inputs.db-type == 'dev' && 'quay.io/mariadb-foundation/mariadb-devel' || '') }}
+        registry: ${{ inputs.db-type == 'enterprise' && 'docker.mariadb.com/enterprise-server' || (inputs.db-type == 'dev' && 'quay.io/mariadb-foundation/mariadb-devel' || '') }}
+#        registry: ${{ inputs.db-type == 'community' && 'quay.io/mariadb-foundation/mariadb-devel' || (inputs.db-type == 'dev' && 'quay.io/mariadb-foundation/mariadb-devel' || '') }}
         registry-user: ${{ inputs.registry-user }}
         registry-password: ${{ inputs.registry-password }}
         additional-conf: |
